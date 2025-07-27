@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Time-Saver Mode",
+  "version": "1.0",
+  "description": "Gently reminds you to stay focused by limiting time on distracting websites.",
+  "permissions": [
+    "tabs",
+    "storage",
+    "alarms",
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*", "*://*.reddit.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "48": "icon.png"
+  }
+}
