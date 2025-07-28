@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Time-Saver Mode Settings</title>
+  <script src="options.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, button { margin: 5px 0; padding: 5px; }
+    label { display: block; margin-top: 15px; }
+    ul { list-style: none; padding: 0; }
+  </style>
+</head>
+<body>
+  <h2>Time-Saver Settings</h2>
+
+  <label>
+    Add Website (e.g. youtube.com):
+    <input type="text" id="siteInput">
+  </label>
+
+  <label>
+    Time Limit (in minutes):
+    <input type="number" id="timeInput" value="10">
+  </label>
+
+  <button id="addBtn">Add Site</button>
+
+  <h3>Tracked Sites</h3>
+  <ul id="siteList"></ul>
+</body>
+</html>
