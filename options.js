@@ -1,3 +1,7 @@
+chrome.storage.sync.get(null, (result) => {
+  console.log("All stored data:", result);
+});
+
 function saveSettings(sites) {
   chrome.storage.sync.set({ trackedSites: sites }, () => {
     console.log("Settings saved.");
