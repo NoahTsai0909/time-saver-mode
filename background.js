@@ -1,28 +1,44 @@
 // List of sites to monitor
-let trackedSites = ["youtube.com", "reddit.com"];
+let trackedSites = [];
+
+chrome.storage.sync.get(["trackedSites"], (result) => {
+  trackedSites = result.trackedSites || [];
+});
+
+
 let timers = {};
 
-// When a tab is updated (page load complete)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete") {
-    let site = new URL(tab.url).hostname;
-    if (trackedSites.some(s => site.includes(s))) {
-      // Get the stored start times
-      chrome.storage.local.get(["startTimes"], (result) => {
-        let startTimes = result.startTimes || {};
+    chrome.storage.sync.get(["trackedSites"], (result) => {
+      let trackedSites = result.trackedSites || [];
+      let site = new URL(tab.url).hostname;
 
-        // If we haven't tracked this tab yet, start tracking
-        if (!startTimes[tabId]) {
-          startTimes[tabId] = Date.now();
-          chrome.storage.local.set({ startTimes });
+      // Find matching site from stored list
+      const matchedSite = trackedSites.find(s => site.includes(s.hostname));
 
-          // Create a 10-minute timer (this can be adjusted later)
-          chrome.alarms.create(`nudge-${tabId}`, { delayInMinutes: 10 });
-        }
-      });
-    }
+      if (matchedSite) {
+        const timeLimit = parseInt(matchedSite.timeLimit) || 10; // default to 10 minutes
+
+        chrome.storage.local.get(["startTimes"], (result) => {
+          let startTimes = result.startTimes || {};
+
+          // Only start the timer if we haven't already
+          if (!startTimes[tabId]) {
+            startTimes[tabId] = Date.now();
+            chrome.storage.local.set({ startTimes });
+
+            // Set alarm with the site-specific time limit
+            chrome.alarms.create(`nudge-${tabId}`, { delayInMinutes: timeLimit });
+          }
+        });
+      }
+    });
   }
 });
+
+
+
 
 // When a tab is removed, stop tracking it
 chrome.tabs.onRemoved.addListener((tabId) => {

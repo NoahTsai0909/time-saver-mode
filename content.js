@@ -1,6 +1,9 @@
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === "TIME_NUDGE") {
     if (!document.getElementById("time-saver-nudge")) {
+      const sound = new Audio(chrome.runtime.getURL("ding.mp3"));
+      sound.play();
+      
       const div = document.createElement("div");
       div.id = "time-saver-nudge";
       div.style = `
