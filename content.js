@@ -1,9 +1,13 @@
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === "TIME_NUDGE") {
     if (!document.getElementById("time-saver-nudge")) {
+      // 🔊 Safely play the ding sound
       const sound = new Audio(chrome.runtime.getURL("ding.mp3"));
-      sound.play();
-      
+      sound.volume = 1.0;
+      sound.play().catch((err) => {
+        console.warn("Ding audio failed to play:", err);
+      });
+
       const div = document.createElement("div");
       div.id = "time-saver-nudge";
       div.style = `
@@ -31,7 +35,6 @@ chrome.runtime.onMessage.addListener((msg) => {
       document.body.appendChild(div);
 
       document.getElementById("dismiss-btn").onclick = () => div.remove();
-
       document.getElementById("snooze-btn").onclick = () => {
         chrome.runtime.sendMessage({ action: "snooze" });
         div.remove();
@@ -39,3 +42,4 @@ chrome.runtime.onMessage.addListener((msg) => {
     }
   }
 });
+
